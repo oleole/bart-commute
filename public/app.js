@@ -4,13 +4,11 @@ const state = {
   workStation: null,
   walkHome: 5,
   walkWork: 5,
-  alertThreshold: 5,
   direction: 'toWork', // 'toWork' or 'toHome'
   stations: [],
   routes: [],
   departures: [],
   refreshTimer: null,
-  notifiedTrains: new Set(),
 };
 
 // ---- DOM refs ----
@@ -21,7 +19,6 @@ const homeSelect = $('#home-station-select');
 const workSelect = $('#work-station-select');
 const walkHomeInput = $('#walk-home-input');
 const walkWorkInput = $('#walk-work-input');
-const alertThresholdInput = $('#alert-threshold-input');
 const saveSetupBtn = $('#save-setup-btn');
 const directionToggle = $('#direction-toggle');
 const directionLabel = $('#direction-label');
@@ -42,7 +39,6 @@ const settingsHomeStation = $('#settings-home-station');
 const settingsWorkStation = $('#settings-work-station');
 const settingsWalkHome = $('#settings-walk-home');
 const settingsWalkWork = $('#settings-walk-work');
-const settingsAlertThreshold = $('#settings-alert-threshold');
 const settingsSaveBtn = $('#settings-save-btn');
 const settingsCancelBtn = $('#settings-cancel-btn');
 
@@ -63,7 +59,6 @@ function loadSettings() {
   state.workStation = localStorage.getItem('workStation');
   state.walkHome = parseInt(localStorage.getItem('walkHome') || '5', 10);
   state.walkWork = parseInt(localStorage.getItem('walkWork') || '5', 10);
-  state.alertThreshold = parseInt(localStorage.getItem('alertThreshold') || '5', 10);
 }
 
 function saveSettings() {
@@ -71,7 +66,6 @@ function saveSettings() {
   localStorage.setItem('workStation', state.workStation);
   localStorage.setItem('walkHome', state.walkHome);
   localStorage.setItem('walkWork', state.walkWork);
-  localStorage.setItem('alertThreshold', state.alertThreshold);
 }
 
 function autoDetectDirection() {
@@ -189,7 +183,6 @@ function updateDirectionUI() {
 function toggleDirection() {
   state.direction = state.direction === 'toWork' ? 'toHome' : 'toWork';
   updateDirectionUI();
-  state.notifiedTrains.clear();
   fetchDepartures();
   fetchTripDetails();
 }
@@ -227,7 +220,6 @@ async function fetchDepartures() {
 
     renderDepartures();
     updateDoorToDoor();
-    checkNotifications();
     updateTimestamp();
   } catch (err) {
     console.error('Failed to fetch departures:', err);
@@ -476,39 +468,10 @@ function updateDoorToDoor() {
     d2dLeaveMin.classList.add('urgent');
   } else {
     d2dLeaveMin.textContent = `${leaveIn} min`;
-    d2dLeaveMin.classList.toggle('urgent', leaveIn <= state.alertThreshold);
+    d2dLeaveMin.classList.toggle('urgent', leaveIn <= 5);
   }
 
   doorToDoor.classList.remove('hidden');
-}
-
-// ---- Notifications ----
-function checkNotifications() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission !== 'granted') return;
-
-  const walkMin = getWalkMinutes();
-
-  state.departures.forEach((d) => {
-    if (d.minutes <= 0) return;
-    const leaveIn = d.minutes - walkMin;
-    const key = `${d.destination}-${d.minutes}-${Date.now() >> 16}`;
-
-    if (leaveIn <= state.alertThreshold && leaveIn >= 0 && !state.notifiedTrains.has(key)) {
-      state.notifiedTrains.add(key);
-      new Notification('Time to leave!', {
-        body: `Leave now! Train to ${d.destination} in ${d.minutes} min from ${stationName(getOrigin())}`,
-        icon: 'icon-192.png',
-        tag: `bart-${d.destination}-${d.minutes}`,
-      });
-    }
-  });
-}
-
-function requestNotificationPermission() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-  }
 }
 
 // ---- Auto-refresh ----
@@ -548,11 +511,9 @@ saveSetupBtn.addEventListener('click', () => {
   state.workStation = workSelect.value;
   state.walkHome = parseInt(walkHomeInput.value, 10) || 0;
   state.walkWork = parseInt(walkWorkInput.value, 10) || 0;
-  state.alertThreshold = parseInt(alertThresholdInput.value, 10) || 5;
   saveSettings();
   autoDetectDirection();
   showMainScreen();
-  requestNotificationPermission();
 });
 
 // Direction toggle
@@ -566,7 +527,6 @@ settingsBtn.addEventListener('click', async () => {
   settingsWorkStation.value = state.workStation;
   settingsWalkHome.value = state.walkHome;
   settingsWalkWork.value = state.walkWork;
-  settingsAlertThreshold.value = state.alertThreshold;
   settingsOverlay.classList.remove('hidden');
 });
 
@@ -575,7 +535,6 @@ settingsSaveBtn.addEventListener('click', () => {
   state.workStation = settingsWorkStation.value;
   state.walkHome = parseInt(settingsWalkHome.value, 10) || 0;
   state.walkWork = parseInt(settingsWalkWork.value, 10) || 0;
-  state.alertThreshold = parseInt(settingsAlertThreshold.value, 10) || 5;
   saveSettings();
   settingsOverlay.classList.add('hidden');
   updateDirectionUI();
