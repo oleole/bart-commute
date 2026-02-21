@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0072ce">
+  <title>BART Commute</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Setup screen (first launch) -->
+  <div id="setup-screen" class="screen hidden">
+    <div class="setup-container">
+      <h1>BART Commute</h1>
+      <p class="setup-subtitle">Set up your commute</p>
+
+      <label for="home-station-select">Home Station</label>
+      <select id="home-station-select">
+        <option value="">Loading stations…</option>
+      </select>
+
+      <label for="work-station-select">Work Station</label>
+      <select id="work-station-select">
+        <option value="">Loading stations…</option>
+      </select>
+
+      <label for="walk-home-input">Walk to home station (min)</label>
+      <input type="number" id="walk-home-input" min="0" max="60" value="5">
+
+      <label for="walk-work-input">Walk to work station (min)</label>
+      <input type="number" id="walk-work-input" min="0" max="60" value="5">
+
+      <label for="alert-threshold-input">Leave alert threshold (min)</label>
+      <input type="number" id="alert-threshold-input" min="1" max="30" value="5">
+
+      <button id="save-setup-btn" class="btn-primary" disabled>Save &amp; Start</button>
+    </div>
+  </div>
+
+  <!-- Main screen -->
+  <div id="main-screen" class="screen hidden">
+    <!-- Header -->
+    <header>
+      <div class="direction-toggle" id="direction-toggle">
+        <span id="direction-label">Home → Work</span>
+      </div>
+      <button id="settings-btn" class="icon-btn" aria-label="Settings">⚙</button>
+    </header>
+
+    <!-- Departure board -->
+    <main>
+      <div id="station-info" class="station-info">
+        <span id="from-station-name">—</span>
+        <span class="arrow">→</span>
+        <span id="to-station-name">—</span>
+      </div>
+
+      <div id="departures-list" class="departures-list">
+        <div class="loading">Loading departures…</div>
+      </div>
+
+      <!-- Trip details -->
+      <div id="trip-details" class="trip-details hidden">
+        <div class="trip-row">
+          <span class="trip-label">Travel time</span>
+          <span id="trip-time" class="trip-value">—</span>
+        </div>
+        <div class="trip-row">
+          <span class="trip-label">Transfers</span>
+          <span id="trip-transfers" class="trip-value">—</span>
+        </div>
+        <div class="trip-row">
+          <span class="trip-label">Fare</span>
+          <span id="trip-fare" class="trip-value">—</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Door-to-door footer -->
+    <footer id="door-to-door" class="door-to-door hidden">
+      <div class="d2d-bart">
+        <span class="d2d-label">Next train</span>
+        <span id="d2d-train-min" class="d2d-value">—</span>
+      </div>
+      <div class="d2d-leave">
+        <span class="d2d-label">Leave in</span>
+        <span id="d2d-leave-min" class="d2d-value">—</span>
+      </div>
+    </footer>
+
+    <!-- Auto-refresh indicator -->
+    <div id="refresh-indicator" class="refresh-indicator">
+      <span id="last-updated">Updated just now</span>
+    </div>
+  </div>
+
+  <!-- Settings overlay -->
+  <div id="settings-overlay" class="overlay hidden">
+    <div class="overlay-content">
+      <h2>Settings</h2>
+
+      <label for="settings-home-station">Home Station</label>
+      <select id="settings-home-station"></select>
+
+      <label for="settings-work-station">Work Station</label>
+      <select id="settings-work-station"></select>
+
+      <label for="settings-walk-home">Walk to home station (min)</label>
+      <input type="number" id="settings-walk-home" min="0" max="60">
+
+      <label for="settings-walk-work">Walk to work station (min)</label>
+      <input type="number" id="settings-walk-work" min="0" max="60">
+
+      <label for="settings-alert-threshold">Leave alert threshold (min)</label>
+      <input type="number" id="settings-alert-threshold" min="1" max="30">
+
+      <div class="settings-actions">
+        <button id="settings-save-btn" class="btn-primary">Save</button>
+        <button id="settings-cancel-btn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

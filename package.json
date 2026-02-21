@@ -1,0 +1,12 @@
+{
+  "name": "bart-commute",
+  "version": "1.0.0",
+  "description": "BART commute PWA — single-tap departure board with smart leave alerts",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

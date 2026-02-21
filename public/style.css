@@ -1,0 +1,506 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --blue: #0072ce;
+  --blue-dark: #005a9e;
+  --bg: #f5f5f5;
+  --card-bg: #fff;
+  --text: #1a1a1a;
+  --text-secondary: #666;
+  --border: #e0e0e0;
+  --danger: #d32f2f;
+  --success: #2e7d32;
+  --yellow: #f9a825;
+  --red: #d32f2f;
+  --orange: #ef6c00;
+  --green: #2e7d32;
+  --blue-line: #0072ce;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-text-size-adjust: 100%;
+}
+
+.screen { display: none; }
+.screen:not(.hidden) { display: flex; flex-direction: column; min-height: 100vh; }
+.hidden { display: none !important; }
+
+/* ---- Setup Screen ---- */
+.setup-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 60px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setup-container h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--blue);
+  text-align: center;
+}
+
+.setup-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+select, input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--blue);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.15s;
+}
+.btn-primary:active { background: var(--blue-dark); }
+.btn-primary:disabled { opacity: 0.5; cursor: default; }
+
+.btn-secondary {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ---- Header ---- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(12px + var(--safe-top)) 16px 12px;
+  background: var(--blue);
+  color: #fff;
+}
+
+.direction-toggle {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.direction-toggle:active { background: rgba(255,255,255,0.15); }
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  line-height: 1;
+}
+.icon-btn:active { background: rgba(255,255,255,0.15); }
+
+/* ---- Station info ---- */
+.station-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
+.station-info .arrow { font-weight: 600; }
+
+/* ---- Departures ---- */
+main {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.departures-list {
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transfer-banner {
+  background: #fff3e0;
+  color: var(--orange);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.loading, .error-msg {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+.error-msg { color: var(--danger); }
+
+.departure-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border-left: 4px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.departure-card:active { background: #f0f0f0; }
+.departure-card.expanded { border-radius: 10px 10px 0 0; }
+
+.departure-card .line-color {
+  width: 8px;
+  height: 40px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.departure-card .info {
+  flex: 1;
+  min-width: 0;
+}
+
+.departure-card .destination {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.departure-card .platform {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.departure-card .minutes {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--blue);
+  flex-shrink: 0;
+}
+
+.departure-card .minutes-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.departure-card .depart-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  margin-top: 2px;
+}
+
+.departure-card .expand-icon {
+  font-size: 18px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.departure-card.expanded .expand-icon {
+  transform: rotate(90deg);
+}
+
+/* ---- Expanded trip detail ---- */
+.trip-detail-expanded {
+  background: var(--card-bg);
+  border-radius: 0 0 10px 10px;
+  padding: 12px 16px 16px;
+  margin-top: -8px;
+  margin-bottom: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border-left: 4px solid var(--blue);
+}
+
+.leg {
+  display: flex;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.leg-timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 14px;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.leg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--blue);
+  flex-shrink: 0;
+}
+
+.leg-line {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  background: var(--blue);
+}
+
+.leg-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.leg-stop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leg-time {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 65px;
+}
+
+.leg-station {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.leg-platform {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.leg-train {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding-left: 73px;
+  font-style: italic;
+}
+
+.leg-transfer {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--orange);
+  padding: 6px 0;
+  border-top: 1px dashed var(--border);
+  margin: 4px 0;
+}
+
+.trip-summary {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.departure-card .minutes.leaving {
+  color: var(--danger);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Line colors */
+.line-yellow { background: #ffd400; }
+.line-red { background: #d32f2f; }
+.line-orange { background: #ef6c00; }
+.line-green { background: #4caf50; }
+.line-blue { background: #0072ce; }
+.line-beige { background: #c8a96e; }
+.line-purple { background: #7b1fa2; }
+.line-default { background: #999; }
+
+.border-yellow { border-left-color: #ffd400; }
+.border-red { border-left-color: #d32f2f; }
+.border-orange { border-left-color: #ef6c00; }
+.border-green { border-left-color: #4caf50; }
+.border-blue { border-left-color: #0072ce; }
+.border-beige { border-left-color: #c8a96e; }
+.border-purple { border-left-color: #7b1fa2; }
+.border-default { border-left-color: #999; }
+
+/* ---- Trip details ---- */
+.trip-details {
+  margin: 4px 16px 8px;
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.trip-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+.trip-row + .trip-row { border-top: 1px solid var(--border); }
+
+.trip-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.trip-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ---- Door-to-door footer ---- */
+.door-to-door {
+  display: flex;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 16px 16px calc(16px + var(--safe-bottom));
+}
+
+.d2d-bart, .d2d-leave {
+  flex: 1;
+  text-align: center;
+}
+
+.d2d-label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.d2d-value {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.d2d-bart .d2d-value { color: var(--blue); }
+.d2d-leave .d2d-value { color: var(--success); }
+.d2d-leave .d2d-value.urgent { color: var(--danger); }
+
+/* ---- Refresh indicator ---- */
+.refresh-indicator {
+  text-align: center;
+  padding: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ---- Settings overlay ---- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.overlay.hidden { display: none; }
+
+.overlay-content {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 500px;
+  border-radius: 16px 16px 0 0;
+  padding: 24px 24px calc(24px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.overlay-content h2 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.settings-actions .btn-primary,
+.settings-actions .btn-secondary {
+  flex: 1;
+}
+
+/* ---- Utilities ---- */
+@media (min-width: 500px) {
+  main { max-width: 500px; margin: 0 auto; width: 100%; }
+  header { justify-content: center; gap: 16px; }
+  .door-to-door { max-width: 500px; margin: 0 auto; width: 100%; }
+}
