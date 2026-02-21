@@ -420,12 +420,12 @@ main {
   font-weight: 600;
 }
 
-/* ---- Door-to-door footer ---- */
+/* ---- Door-to-door banner ---- */
 .door-to-door {
   display: flex;
   background: var(--card-bg);
-  border-top: 1px solid var(--border);
-  padding: 16px 16px calc(16px + var(--safe-bottom));
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
 }
 
 .d2d-bart, .d2d-leave {

@@ -52,6 +52,18 @@
       <button id="settings-btn" class="icon-btn" aria-label="Settings">⚙</button>
     </header>
 
+    <!-- Door-to-door banner -->
+    <div id="door-to-door" class="door-to-door hidden">
+      <div class="d2d-bart">
+        <span class="d2d-label">Next train</span>
+        <span id="d2d-train-min" class="d2d-value">—</span>
+      </div>
+      <div class="d2d-leave">
+        <span class="d2d-label">Leave in</span>
+        <span id="d2d-leave-min" class="d2d-value">—</span>
+      </div>
+    </div>
+
     <!-- Departure board -->
     <main>
       <div id="station-info" class="station-info">
@@ -80,18 +92,6 @@
         </div>
       </div>
     </main>
-
-    <!-- Door-to-door footer -->
-    <footer id="door-to-door" class="door-to-door hidden">
-      <div class="d2d-bart">
-        <span class="d2d-label">Next train</span>
-        <span id="d2d-train-min" class="d2d-value">—</span>
-      </div>
-      <div class="d2d-leave">
-        <span class="d2d-label">Leave in</span>
-        <span id="d2d-leave-min" class="d2d-value">—</span>
-      </div>
-    </footer>
 
     <!-- Auto-refresh indicator -->
     <div id="refresh-indicator" class="refresh-indicator">

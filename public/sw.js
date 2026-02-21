@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bart-commute-v6';
+const CACHE_NAME = 'bart-commute-v7';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
