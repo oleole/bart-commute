@@ -70,7 +70,7 @@ function saveSettings() {
 
 function autoDetectDirection() {
   const hour = new Date().getHours();
-  state.direction = hour < 12 ? 'toWork' : 'toHome';
+  state.direction = (hour < 12 || hour >= 22) ? 'toWork' : 'toHome';
 }
 
 // ---- Screens ----
